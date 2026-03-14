@@ -1,0 +1,166 @@
+let time = 0
+let timer = null
+let activeTeam = 0
+
+const teams = [
+  {times: []},
+  {times: []}
+]
+
+let totals
+document.addEventListener('DOMContentLoaded', ()=>{
+  totals = document.querySelectorAll(".total span")
+})
+
+function updateDisplay(){
+
+  let minutes = Math.floor(time/60000)
+  let seconds = Math.floor((time%60000)/1000)
+  let cent = Math.floor((time%1000)/10)
+
+  minutes = String(minutes).padStart(2,'0')
+  seconds = String(seconds).padStart(2,'0')
+  cent = String(cent).padStart(2,'0')
+
+  document.getElementById("display").textContent =
+    `${minutes}:${seconds}:${cent}`
+}
+
+//#region TIMER
+function startTimer(){
+
+  if(timer) return
+
+  timer = setInterval(()=>{
+    time += 10
+    updateDisplay()
+  },10)
+
+}
+
+function pauseTimer(){
+
+  clearInterval(timer)
+  timer = null
+
+}
+
+function resetTimer(){
+
+  clearInterval(timer)
+  timer = null
+
+  saveTime(time)
+
+  time = 0
+  updateDisplay()
+
+}
+
+function addTime(sec){
+
+  time += sec*1000
+  if(time < 0) time = 0
+  updateDisplay()
+
+}
+//#endregion
+
+//#region TEAMS
+function selectTeam(index){
+
+  activeTeam = index
+
+  document.querySelectorAll(".team").forEach(t=>t.classList.remove("active"))
+  document.getElementById("team"+index).classList.add("active")
+
+  const name = document.querySelector(`#team${index} h2`).innerText
+  document.getElementById("activeTeamName").innerText = name
+
+}
+
+function saveTime(t){
+
+  if(t <= 0) return
+
+  teams[activeTeam].times.push(t)
+  renderTeams()
+
+}
+
+function removeTime(team,index){
+
+  teams[team].times.splice(index,1)
+  renderTeams()
+
+}
+
+function formatTime(t){
+
+  let m = Math.floor(t/60000)
+  let s = Math.floor((t%60000)/1000)
+  let c = Math.floor((t%1000)/10)
+
+  m = String(m).padStart(2,'0')
+  s = String(s).padStart(2,'0')
+  c = String(c).padStart(2,'0')
+
+  return `${m}:${s}:${c}`
+
+}
+
+function renderTeams(){
+
+  teams.forEach((team,i)=>{
+
+    const list = document.querySelector(`#team${i} .times`)
+    list.innerHTML=""
+
+    team.times.forEach((t,index)=>{
+
+      const li = document.createElement("li")
+
+      li.innerHTML = `
+        ${formatTime(t)}
+        <button onclick="removeTime(${i},${index})">X</button>
+      `
+
+      list.appendChild(li)
+
+    })
+
+    const total = team.times.reduce((a,b)=>a+b,0)
+
+    document.querySelector(`#team${i} .total span`)
+      .innerText = formatTime(total)
+
+    checkCurrentWinner()
+
+  })
+
+}
+//#endregion
+
+//#region RESULTS
+function resetCurrentWinner(){
+  totals.forEach(t=>t.parentElement.classList.remove("current-winner"))
+}
+
+function checkCurrentWinner(){
+  if (teams.every(t=>t.times.length == 0)){
+    resetCurrentWinner()
+    return
+  }
+
+  if (totals.length < 2) return
+
+  if (totals[1].textContent < totals[0].textContent){
+    totals[1].parentElement.classList.add("current-winner")
+    totals[0].parentElement.classList.remove("current-winner")
+  }
+  else{
+    totals[0].parentElement.classList.add("current-winner")
+    totals[1].parentElement.classList.remove("current-winner")
+  }
+}
+//#endregion

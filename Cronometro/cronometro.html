@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js"></script>
+  <title>Intesa Vincente: Cronometro</title>
+</head>
+<body>
+
+  <header>
+    Squadra attiva: <span id="activeTeamName">Squadra 1</span>
+  </header>
+
+  <div class="game-layout">
+    <main>
+      <div class="cronometro">
+        <div id="display">00:00:00</div>
+
+        <div class="controls">
+          <button onclick="startTimer()">▶<br><span class="penalty">(play)</span></button>
+          <button onclick="pauseTimer()">⏸<br><span class="penalty">(pause)</span></button>
+          <button onclick="resetTimer()">⏹<br><span class="penalty">(save)</span></button>
+        </div>
+
+        <div class="extra">
+          <button onclick="addTime(10)">Parola Doppia<br><span class="penalty">(+10s)</span></button>
+          <button onclick="addTime(30)">Passo<br><span class="penalty">(+30s)</span></button>
+          <br>
+          <button onclick="addTime(-10)">-10s</button>
+          <button onclick="addTime(-30)">-30s</button>
+        </div>
+      </div>
+    </main>
+    
+    <aside>
+      <div class="team active" id="team0" onclick="selectTeam(0)">
+        <h2 contenteditable="true">Squadra 1</h2>
+        <ul class="times"></ul>
+        <div class="total">Totale: <span>00:00:00</span></div>
+      </div>
+
+      <div class="team" id="team1" onclick="selectTeam(1)">
+        <h2 contenteditable="true">Squadra 2</h2>
+        <ul class="times"></ul>
+        <div class="total">Totale: <span>00:00:00</span></div>
+      </div>
+    </aside>
+  </div>
+
+</body>
+</html>

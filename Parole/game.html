@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="../Cronometro/style.css">
+  <script src="./script.js"></script>
+  <title>Intesa Vincente: Parole</title>
+</head>
+<body>
+  <header>
+    Squadra attiva: <span id="activeTeamName">Squadra 1</span>
+  </header>
+
+  <div class="game-layout">
+
+    <main>
+      <div class="word-box">
+        <button id="startBtn" onclick="startGame()">START</button>
+
+        <div id="wordArea" style="display:none">
+          <div id="wordDisplay">---</div>
+          <button onclick="nextWord()">Nuova parola</button>
+          <div class="word-actions">
+            <button onclick="markWord(true)">✔ Indovinata</button>
+            <button onclick="markWord(false)">↷ Passata</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside>
+      <div class="team active" id="team0" onclick="selectTeam(0)">
+        <h2 contenteditable="true">Squadra 1</h2>
+        <ul class="words"></ul>
+      </div>
+
+      <div class="team" id="team1" onclick="selectTeam(1)">
+        <h2 contenteditable="true">Squadra 2</h2>
+        <ul class="words"></ul>
+      </div>
+    </aside>
+
+  </div>
+</body>
+</html>
