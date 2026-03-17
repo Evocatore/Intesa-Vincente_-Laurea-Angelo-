@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./Cronometro/style.css">
   <link rel="stylesheet" href="./style.css">
-  <title>Menù Intesa Vincente</title>
+  <link rel="stylesheet" href="./style-global.css">
+  <title>Intesa Vincente</title>
 </head>
 <body>
+
+  <div id="transition-overlay"></div>
 
   <header>
     Intesa Vincente
@@ -16,15 +19,27 @@
   <main class="menu-main">
 
     <button onclick="openPage('./Cronometro/cronometro.html')">Cronometro</button>
-    <button onclick="openPage('./parole/game.html')">Gioco delle Parole</button>
+    <button onclick="openPage('./Parole/game.html')">Gioco delle Parole</button>
 
   </main>
 
-  <script>
+  <footer>
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="./src/video.mp4" type="video/mp4">
+    </video>
+  </footer>
+
+  <!-- <script>
     function openPage(url){
       window.location.href = url
     }
+  </script> -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="./script.js"></script>
+  <script>
+    window.addEventListener("pageshow", function(event) {
+      document.body.classList.add("loaded");
+    });
   </script>
-
 </body>
 </html>

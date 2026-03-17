@@ -147,10 +147,10 @@ function resetCurrentWinner(){
 }
 
 function checkCurrentWinner(){
-  if (teams.every(t=>t.times.length == 0)){
-    resetCurrentWinner()
-    return
-  }
+  // if (teams.every(t=>t.times.length == 0)){
+  resetCurrentWinner()
+  //   return
+  // }
 
   if (totals.length < 2) return
 
@@ -158,7 +158,7 @@ function checkCurrentWinner(){
     totals[1].parentElement.classList.add("current-winner")
     totals[0].parentElement.classList.remove("current-winner")
   }
-  else{
+  else if (totals[0].textContent < totals[1].textContent){
     totals[0].parentElement.classList.add("current-winner")
     totals[1].parentElement.classList.remove("current-winner")
   }

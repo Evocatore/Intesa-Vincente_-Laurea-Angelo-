@@ -26,6 +26,7 @@ header{
 #activeTeamName{
   color:#22c55e;
 }
+
 /* MAIN */
 
 main{
@@ -37,6 +38,7 @@ main{
 /* ASIDE */
 
 aside{
+  box-sizing: border-box;
   display:flex;
   justify-content:center;
   gap:20px;
@@ -46,111 +48,10 @@ aside{
 }
 
 
-@media (max-width: 768px){
-
-  header{
-    font-size:20px;
-    padding:15px;
-  }
-
-  main{
-    margin-top:20px;
-  }
-
-  .cronometro{
-    width:90%;
-    padding:25px;
-  }
-
-  #display{
-    font-size:42px;
-  }
-
-  button{
-    font-size:16px;
-    padding:12px 16px;
-  }
-
-  aside{
-    flex-direction:column;
-    gap:15px;
-    margin:30px auto;
-  }
-
-  .team{
-    width:100%;
-  }
-
-}
-
-/* 
-@media (max-width: 480px){
-
-  #display{
-    font-size:36px;
-    letter-spacing:2px;
-  }
-
-  button{
-    font-size:15px;
-    padding:12px;
-    width:100%;
-  }
-
-  .controls,
-  .extra{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .extra br{
-    display:none;
-  }
-
-} */
-
-/* MOBILE ORIZZONTALE */
-
-@media (max-height:600px) and (orientation:landscape){
-
-  .game-layout{
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    gap:30px;
-    padding:20px;
-  }
-
-  main{
-    margin-top:0;
-  }
-
-  aside{
-    flex-direction:column;
-    margin:0;
-    width:300px;
-  }
-
-  .team{
-    width:100%;
-  }
-
-  .cronometro{
-    width:300px;
-    padding:20px;
-  }
-
-  #display{
-    font-size:40px;
-  }
-
-}
-
-
 /* CRONOMETRO */
 
 .cronometro{
+  box-sizing: border-box;
   background:linear-gradient(145deg,#1e293b,#0f172a);
   padding:30px;
   border-radius:20px;
@@ -158,7 +59,7 @@ aside{
     0 0 30px rgba(0,0,0,0.6),
     inset 0 0 10px rgba(255,255,255,0.05);
   text-align:center;
-  width:320px;
+  width:420px;
 }
 
 /* DISPLAY */
@@ -247,6 +148,7 @@ button .penalty{
 /* TEAMS */
 
 .team{
+  box-sizing: border-box;
   flex:1;
   padding:15px;
   border-radius:12px;
@@ -285,4 +187,83 @@ button .penalty{
 .current-winner{
   border:2px solid #22c55e;
   box-shadow:0 0 12px rgba(34,197,94,0.6);
+}
+
+
+
+
+/* MOBILE */
+
+@media (max-width: 768px){
+
+  header{
+    font-size:20px;
+    padding:15px;
+  }
+
+  main{
+    margin-top:20px;
+  }
+
+  .cronometro{
+    width:90%;
+    padding:25px;
+  }
+
+  #display{
+    font-size:42px;
+  }
+
+  button{
+    font-size:16px;
+    padding:12px 16px;
+  }
+
+  aside{
+    flex-direction:column;
+    gap:15px;
+    margin:30px auto;
+  }
+
+  .team{
+    width:100%;
+  }
+
+}
+
+/* MOBILE ORIZZONTALE */
+
+@media (max-height:600px) and (orientation:landscape){
+
+  .game-layout{
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    gap:30px;
+    padding:20px;
+  }
+
+  main{
+    margin-top:0;
+  }
+
+  aside{
+    flex-direction:column;
+    margin:0;
+    width:300px;
+  }
+
+  .team{
+    width:100%;
+  }
+
+  .cronometro{
+    width:300px;
+    padding:20px;
+  }
+
+  #display{
+    font-size:40px;
+  }
+
 }
