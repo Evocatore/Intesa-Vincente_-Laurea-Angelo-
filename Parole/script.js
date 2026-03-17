@@ -52,6 +52,7 @@ function nextWord(){
 
   document.getElementById("wordDisplay").innerText = current.words[current.currentIndex]
 
+  saveGame();
 }
 
 function markWord(correct){
@@ -80,6 +81,7 @@ function markWord(correct){
   const btns = document.querySelectorAll(".word-actions button")
     btns.forEach(b => b.disabled = true)
 
+    saveGame();
 }
 
 function renderTeams(){
@@ -115,6 +117,7 @@ function removeWord(team,index){
   teams[team].words.splice(index,1)
   renderTeams()
   checkCurrentWinner()
+  saveGame();
 }
 //#endregion
 
@@ -172,4 +175,71 @@ function selectTeam(index){
       b.disabled = current.currentIndex >= current.words.length
     })
   }
+
+  saveGame();
+}
+
+// caricamento dati salvati
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadGame();
+});
+
+function saveGame() {
+  const data = {
+    words: words.map(w => ({
+      currentIndex: w.currentIndex,
+      ended: w.ended,
+      pass: w.pass
+    })),
+    teams: teams.map(t => ({ words: t.words })),
+    activeTeam: activeTeam
+  };
+  localStorage.setItem("gameData", JSON.stringify(data));
+}
+
+function loadGame() {
+  const saved = localStorage.getItem("gameData");
+  if(!saved) return;
+
+  const data = JSON.parse(saved);
+
+  // Ripristina lo stato delle parole
+  data.words.forEach((w,i) => {
+    words[i].currentIndex = w.currentIndex;
+    words[i].ended = w.ended;
+    words[i].pass = w.pass;
+  });
+
+  // Ripristina parole dei team
+  data.teams.forEach((t,i) => {
+    teams[i].words = t.words || [];
+  });
+
+  // Ripristina squadra attiva
+  if(data.activeTeam != null) activeTeam = data.activeTeam;
+
+  // Aggiorna UI
+  renderTeams();
+  checkCurrentWinner();
+  selectTeam(activeTeam);
+}
+
+function resetGame() {
+  localStorage.removeItem("gameData");
+
+  // Reset logico
+  words.forEach((w,i) => {
+    w.currentIndex = -1;
+    w.ended = false;
+    w.pass = maxPass;
+  });
+  teams.forEach(t => t.words = []);
+  activeTeam = 0;
+
+  renderTeams();
+  checkCurrentWinner();
+  selectTeam(activeTeam);
+
+  document.getElementById("startBtn").style.display = "block";
+  document.getElementById("wordArea").style.display = "none";
 }

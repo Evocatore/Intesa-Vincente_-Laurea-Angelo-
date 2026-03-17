@@ -36,6 +36,7 @@ function startTimer(){
     updateDisplay()
   },10)
 
+  saveTimer()
 }
 
 function pauseTimer(){
@@ -43,6 +44,7 @@ function pauseTimer(){
   clearInterval(timer)
   timer = null
 
+  saveTimer()
 }
 
 function resetTimer(){
@@ -55,6 +57,7 @@ function resetTimer(){
   time = 0
   updateDisplay()
 
+  saveTimer()
 }
 
 function addTime(sec){
@@ -77,6 +80,7 @@ function selectTeam(index){
   const name = document.querySelector(`#team${index} h2`).innerText
   document.getElementById("activeTeamName").innerText = name
 
+  saveTeam()
 }
 
 function saveTime(t){
@@ -86,6 +90,7 @@ function saveTime(t){
   teams[activeTeam].times.push(t)
   renderTeams()
 
+  saveToLocal()
 }
 
 function removeTime(team,index){
@@ -93,6 +98,7 @@ function removeTime(team,index){
   teams[team].times.splice(index,1)
   renderTeams()
 
+  saveToLocal()
 }
 
 function formatTime(t){
@@ -142,6 +148,33 @@ function renderTeams(){
 //#endregion
 
 //#region RESULTS
+// caricamento dati salvati
+document.addEventListener('DOMContentLoaded', () => {
+  totals = document.querySelectorAll(".total span");
+
+  const saved = localStorage.getItem("teamsData");
+  if(saved) {
+    const parsed = JSON.parse(saved);
+    // ripristina solo se è un array corretto
+    if(Array.isArray(parsed) && parsed.length === teams.length) {
+      parsed.forEach((team,i) => {
+        teams[i].times = team.times || [];
+      });
+    }
+  }
+
+  renderTeams(); // aggiorna subito la UI
+
+  const savedTime = localStorage.getItem("currentTime");
+  const savedTeam = localStorage.getItem("activeTeam");
+
+  if(savedTime) time = parseInt(savedTime);
+  if(savedTeam) activeTeam = parseInt(savedTeam);
+
+  updateDisplay();
+  selectTeam(activeTeam);
+});
+
 function resetCurrentWinner(){
   totals.forEach(t=>t.parentElement.classList.remove("current-winner"))
 }
@@ -162,5 +195,18 @@ function checkCurrentWinner(){
     totals[0].parentElement.classList.add("current-winner")
     totals[1].parentElement.classList.remove("current-winner")
   }
+}
+
+function saveToLocal() {
+  localStorage.setItem("teamsData", JSON.stringify(teams));
+}
+
+function saveTimer() {
+  localStorage.setItem("currentTime", time);
+  saveTeam()
+}
+
+function saveTeam() {
+  localStorage.setItem("activeTeam", activeTeam);
 }
 //#endregion
