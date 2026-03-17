@@ -37,8 +37,22 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="./script.js"></script>
   <script>
-    window.addEventListener("pageshow", function(event) {
+    /* window.addEventListener("pageshow", function(event) {
       document.body.classList.add("loaded");
+    }); */
+    window.addEventListener("pageshow", function(event) {
+      const overlay = document.getElementById("transition-overlay");
+
+      // Reset overlay sempre
+      overlay.classList.remove("active");
+
+      // Forza il fade-in del body
+      document.body.classList.remove("loaded");
+
+      // Attendi un tick per triggerare la transizione
+      requestAnimationFrame(() => {
+        document.body.classList.add("loaded");
+      });
     });
   </script>
 </body>
