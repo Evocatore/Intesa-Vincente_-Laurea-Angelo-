@@ -21,9 +21,9 @@ header{
     0 4px 15px rgba(0,0,0,0.4);
 }
 
-main {
+/* main {
   padding-top: 1rem;
-}
+} */
 
 #grid {
   display: grid;
@@ -92,4 +92,10 @@ button:active{
 #resetBtn {
   display: block;
   margin: 0 auto;
+}
+
+.audio-box {
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+  text-align: start;
 }

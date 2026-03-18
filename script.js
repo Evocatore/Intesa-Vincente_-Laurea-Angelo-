@@ -66,10 +66,26 @@ window.onload = () => {
   }, 300);
 };
 
-window.addEventListener("DOMContentLoaded", () => {
-  const sound = new Audio('./src/opening-sound.mp3');
-  sound.volume = 0.5;
-  sound.play().catch(e => {
-    console.warn("Autoplay bloccato dal browser:", e);
-  });
-});
+//#region SOUND
+// window.addEventListener("DOMContentLoaded", () => {
+//   const sound = new Audio('./src/opening-sound.mp3');
+//   sound.volume = 0.5;
+//   sound.play().catch(e => {
+//     console.warn("Autoplay bloccato dal browser:", e);
+//   });
+// });
+
+const sound = new Audio('./src/opening-sound.mp3');
+sound.volume = 0.5;
+
+function playSoundOnce() {
+  sound.play().catch(e => console.warn(e));
+  // Rimuove l'evento per non ripetere
+  window.removeEventListener('click', playSoundOnce);
+  window.removeEventListener('touchstart', playSoundOnce);
+}
+
+// Eventi per qualsiasi interazione dell'utente
+window.addEventListener('click', playSoundOnce);
+window.addEventListener('touchstart', playSoundOnce);
+//#endregion

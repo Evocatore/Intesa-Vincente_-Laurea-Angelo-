@@ -235,17 +235,42 @@ function resetGrid() {
 
 
 //#region SUONI
-window.addEventListener("DOMContentLoaded", () => {
-  const loopSound = new Audio('../src/gameplay-crucintarsio.mp3');
-  loopSound.loop = true;
-  loopSound.volume = 0.5;
-  loopSound.play().catch(e => {
-    console.warn("Autoplay bloccato dal browser:", e);
-  });
+// window.addEventListener("DOMContentLoaded", () => {
+//   const loopSound = new Audio('../src/gameplay-crucintarsio.mp3');
+//   loopSound.loop = true;
+//   loopSound.volume = 0.5;
+//   loopSound.play().catch(e => {
+//     console.warn("Autoplay bloccato dal browser:", e);
+//   });
 
-  window.addEventListener("beforeunload", () => {
+//   window.addEventListener("beforeunload", () => {
+//     loopSound.pause();
+//     loopSound.currentTime = 0;
+//   });
+// });
+
+const loopSound = new Audio('../src/gameplay-crucintarsio.mp3');
+loopSound.loop = true;
+loopSound.volume = 0.5;
+
+const audioBtn = document.getElementById('startAudio');
+let isPlaying = false;
+
+audioBtn.addEventListener('click', () => {
+  if(!isPlaying){
+    loopSound.play().catch(e => console.warn("Autoplay bloccato:", e));
+    audioBtn.textContent = '⏸ Musica'; // cambia simbolo in pausa
+    isPlaying = true;
+  } else {
     loopSound.pause();
-    loopSound.currentTime = 0;
-  });
+    audioBtn.textContent = '▶ Musica'; // cambia simbolo in play
+    isPlaying = false;
+  }
+});
+
+// Ferma audio quando si lascia la pagina
+window.addEventListener("beforeunload", () => {
+  loopSound.pause();
+  loopSound.currentTime = 0;
 });
 //#endregion
