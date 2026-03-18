@@ -18,6 +18,8 @@ const gridData = [
 const grid = document.getElementById("grid");
 const cellMap = [];
 
+const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
 gridData.forEach((row, r) => {
   row.forEach((cell, c) => {
     const input = document.createElement("input");
@@ -56,6 +58,7 @@ gridData.forEach((row, r) => {
       //     if (next) next.focus();
       //   }
       // });
+      // per desktop
       input.addEventListener("keydown", (e) => {
         const r = parseInt(input.dataset.row);
         const c = parseInt(input.dataset.col);
@@ -97,6 +100,7 @@ gridData.forEach((row, r) => {
             }, 0);
           } else {
             input.value = "";
+            input.dataset.prev = input.value;
             saveState();
           }
           return;
@@ -112,51 +116,44 @@ gridData.forEach((row, r) => {
           move(r, c, 0, 1);
         }
       });
-
       // per mobile
-      // input.addEventListener("input", (e) => {
-      //   const r = parseInt(input.dataset.row);
-      //   const c = parseInt(input.dataset.col);
+      input.addEventListener("beforeinput", (e) => {
+        if (!isTouch) return; // blocca su desktop
 
-      //   // Trasforma in maiuscolo
-      //   input.value = input.value.toUpperCase();
+        // Se è inserimento di testo (digitazione)
+        if (e.inputType === "insertText") {
+          e.preventDefault(); // blocca comportamento default
 
-      //   if (/^[a-zA-Z]$/.test(e.key)) {
-      //     e.preventDefault();
+          const char = e.data.toUpperCase();
 
-      //     // sovrascrive sempre
-      //     input.value = e.key.toUpperCase();
-      //     saveState();
-      //     move(r, c, 0, 1);
-      //   }
-      // });
-      // input.addEventListener("input", () => {
-      //   saveState();
-      // });
+          input.value = char;
+          input.dataset.prev = char;
 
+          saveState();
+
+          const r = parseInt(input.dataset.row);
+          const c = parseInt(input.dataset.col);
+
+          move(r, c, 0, 1); // vai avanti
+        }
+      });
       input.addEventListener("input", (e) => {
+        if (!isTouch) return; // blocca su desktop
+
+        const prev = input.dataset.prev;
+        const curr = input.value;
+
         const r = parseInt(input.dataset.row);
         const c = parseInt(input.dataset.col);
 
-        const prev = input.dataset.prev;
-        let curr = input.value;
-
-        // forza una sola lettera maiuscola
-        if (curr.length > 1) {
-          curr = curr.slice(-1);
-        }
-
-        curr = curr.toUpperCase();
-        input.value = curr;
-
-        // 🔙 BACKSPACE (cancellazione)
+        // BACKSPACE su cella piena
         if (curr === "" && prev !== "") {
-          // ha cancellato contenuto nella cella
+          input.dataset.prev = "";
           saveState();
           return;
         }
 
-        // 🔙 BACKSPACE su cella vuota → vai indietro
+        // BACKSPACE su cella vuota → vai indietro
         if (curr === "" && prev === "") {
           move(r, c, 0, -1);
 
@@ -171,16 +168,54 @@ gridData.forEach((row, r) => {
 
           return;
         }
-
-        // 🔤 INSERIMENTO NORMALE
-        if (curr !== "") {
-          saveState();
-          move(r, c, 0, 1);
-        }
-
-        // aggiorna stato precedente
-        input.dataset.prev = input.value;
       });
+      // input.addEventListener("input", (e) => {
+      //   const r = parseInt(input.dataset.row);
+      //   const c = parseInt(input.dataset.col);
+
+      //   const prev = input.dataset.prev;
+      //   let curr = input.value;
+
+      //   // forza una sola lettera maiuscola
+      //   if (curr.length > 1) {
+      //     curr = curr.slice(-1);
+      //   }
+
+      //   curr = curr.toUpperCase();
+      //   input.value = curr;
+
+      //   // 🔙 BACKSPACE (cancellazione)
+      //   if (curr === "" && prev !== "") {
+      //     // ha cancellato contenuto nella cella
+      //     saveState();
+      //     return;
+      //   }
+
+      //   // 🔙 BACKSPACE su cella vuota → vai indietro
+      //   if (curr === "" && prev === "") {
+      //     move(r, c, 0, -1);
+
+      //     setTimeout(() => {
+      //       const prevCell = document.activeElement;
+      //       if (prevCell) {
+      //         prevCell.value = "";
+      //         prevCell.dataset.prev = "";
+      //         saveState();
+      //       }
+      //     }, 0);
+
+      //     return;
+      //   }
+
+      //   // 🔤 INSERIMENTO NORMALE
+      //   if (curr !== "") {
+      //     saveState();
+      //     move(r, c, 0, 1);
+      //   }
+
+      //   // aggiorna stato precedente
+      //   input.dataset.prev = input.value;
+      // });
 
     } else {
       input.classList.add("cell");
@@ -343,18 +378,6 @@ function unlockAudio() {
 
 document.addEventListener("touchstart", unlockAudio, { once: true });
 // document.addEventListener("click", unlockAudio, { once: true });
-
-// audioBtn.addEventListener('click', () => {
-//   if(!isPlaying){
-//     loopSound.play().catch(e => console.warn("Autoplay bloccato:", e));
-//     audioBtn.textContent = '⏸ Musica'; // cambia simbolo in pausa
-//     isPlaying = true;
-//   } else {
-//     loopSound.pause();
-//     audioBtn.textContent = '▶ Musica'; // cambia simbolo in play
-//     isPlaying = false;
-//   }
-// });
 
 audioBtn.addEventListener('click', () => {
   if (!isPlaying) {

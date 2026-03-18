@@ -90,7 +90,7 @@ function removeTime(team,index){
   teams[team].times.splice(index,1)
   renderTeams()
 
-  saveToLocal()
+  saveState()
 }
 
 function formatTime(t){
@@ -143,27 +143,8 @@ function renderTeams(){
 // caricamento dati salvati
 document.addEventListener('DOMContentLoaded', () => {
   totals = document.querySelectorAll(".total span");
-
-  // const saved = localStorage.getItem("teamsData");
-  // if(saved) {
-  //   const parsed = JSON.parse(saved);
-  //   // ripristina solo se è un array corretto
-  //   if(Array.isArray(parsed) && parsed.length === teams.length) {
-  //     parsed.forEach((team,i) => {
-  //       teams[i].times = team.times || [];
-  //     });
-  //   }
-  // }
-
-  // renderTeams(); // aggiorna subito la UI
-
-  // const savedTime = localStorage.getItem("currentTime");
-  // const savedTeam = localStorage.getItem("activeTeam");
-
-  // if(savedTime) time = parseInt(savedTime);
-  // if(savedTeam) activeTeam = parseInt(savedTeam);
-
-  const savedState = localStorage.getItem("gameState");
+  
+  const savedState = localStorage.getItem(STORAGE_KEY);
   if(savedState) {
     const parsed = JSON.parse(savedState);
     if(parsed.teams && Array.isArray(parsed.teams) && parsed.teams.length === teams.length) {
@@ -171,9 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
         teams[i].times = team.times || [];
       });
     }
-    if(parsed.currentTime) time = parsed.currentTime;
+    // if(parsed.currentTime) time = parsed.currentTime;
+    if(parsed.currentTime !== undefined) time = parsed.currentTime;
     if(parsed.activeTeam !== undefined) activeTeam = parsed.activeTeam;
   }
+
+  renderTeams(); // aggiorna subito la UI
 
   updateDisplay();
   selectTeam(activeTeam);
