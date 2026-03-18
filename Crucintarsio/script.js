@@ -32,6 +32,13 @@ gridData.forEach((row, r) => {
       input.disabled = true;
     } else if (cell === "" || cell === ".") {
       input.classList.add("cell");
+
+      input.dataset.prev = "";
+      input.setAttribute("inputmode", "text");
+      input.setAttribute("autocomplete", "off");
+      input.setAttribute("autocorrect", "off");
+      input.setAttribute("spellcheck", "false");
+
       if (cell === ".")
       {
       input.classList.add("highlight");
@@ -105,6 +112,76 @@ gridData.forEach((row, r) => {
           move(r, c, 0, 1);
         }
       });
+
+      // per mobile
+      // input.addEventListener("input", (e) => {
+      //   const r = parseInt(input.dataset.row);
+      //   const c = parseInt(input.dataset.col);
+
+      //   // Trasforma in maiuscolo
+      //   input.value = input.value.toUpperCase();
+
+      //   if (/^[a-zA-Z]$/.test(e.key)) {
+      //     e.preventDefault();
+
+      //     // sovrascrive sempre
+      //     input.value = e.key.toUpperCase();
+      //     saveState();
+      //     move(r, c, 0, 1);
+      //   }
+      // });
+      // input.addEventListener("input", () => {
+      //   saveState();
+      // });
+
+      input.addEventListener("input", (e) => {
+        const r = parseInt(input.dataset.row);
+        const c = parseInt(input.dataset.col);
+
+        const prev = input.dataset.prev;
+        let curr = input.value;
+
+        // forza una sola lettera maiuscola
+        if (curr.length > 1) {
+          curr = curr.slice(-1);
+        }
+
+        curr = curr.toUpperCase();
+        input.value = curr;
+
+        // 🔙 BACKSPACE (cancellazione)
+        if (curr === "" && prev !== "") {
+          // ha cancellato contenuto nella cella
+          saveState();
+          return;
+        }
+
+        // 🔙 BACKSPACE su cella vuota → vai indietro
+        if (curr === "" && prev === "") {
+          move(r, c, 0, -1);
+
+          setTimeout(() => {
+            const prevCell = document.activeElement;
+            if (prevCell) {
+              prevCell.value = "";
+              prevCell.dataset.prev = "";
+              saveState();
+            }
+          }, 0);
+
+          return;
+        }
+
+        // 🔤 INSERIMENTO NORMALE
+        if (curr !== "") {
+          saveState();
+          move(r, c, 0, 1);
+        }
+
+        // aggiorna stato precedente
+        input.dataset.prev = input.value;
+      });
+
     } else {
       input.classList.add("cell");
       input.classList.add("special");
@@ -256,14 +333,40 @@ loopSound.volume = 0.5;
 const audioBtn = document.getElementById('startAudio');
 let isPlaying = false;
 
+
+function unlockAudio() {
+  loopSound.play().then(() => {
+    loopSound.pause();
+    loopSound.currentTime = 0;
+  }).catch(() => {});
+}
+
+document.addEventListener("touchstart", unlockAudio, { once: true });
+// document.addEventListener("click", unlockAudio, { once: true });
+
+// audioBtn.addEventListener('click', () => {
+//   if(!isPlaying){
+//     loopSound.play().catch(e => console.warn("Autoplay bloccato:", e));
+//     audioBtn.textContent = '⏸ Musica'; // cambia simbolo in pausa
+//     isPlaying = true;
+//   } else {
+//     loopSound.pause();
+//     audioBtn.textContent = '▶ Musica'; // cambia simbolo in play
+//     isPlaying = false;
+//   }
+// });
+
 audioBtn.addEventListener('click', () => {
-  if(!isPlaying){
-    loopSound.play().catch(e => console.warn("Autoplay bloccato:", e));
-    audioBtn.textContent = '⏸ Musica'; // cambia simbolo in pausa
-    isPlaying = true;
+  if (!isPlaying) {
+    loopSound.play().then(() => {
+      audioBtn.textContent = '⏸ Musica';
+      isPlaying = true;
+    }).catch(e => {
+      console.warn("Play fallito:", e);
+    });
   } else {
     loopSound.pause();
-    audioBtn.textContent = '▶ Musica'; // cambia simbolo in play
+    audioBtn.textContent = '▶ Musica';
     isPlaying = false;
   }
 });
