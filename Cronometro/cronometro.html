@@ -27,6 +27,7 @@
 
         <div class="extra">
           <button onclick="addTime(10)">Parola Doppia<br><span class="penalty">(+10s)</span></button>
+          <button onclick="addTime(30)">2° Tentativo<br><span class="penalty">(+30s)</span></button>
           <button onclick="addTime(30)">Passo<br><span class="penalty">(+30s)</span></button>
           <br>
           <button onclick="addTime(-10)">-10s</button>
@@ -48,6 +49,11 @@
         <div class="total">Totale: <span>00:00:00</span></div>
       </div>
     </aside>
+  </div>
+
+
+  <div class="reset-box">
+    <button id="resetBtn" onclick="resetAll()">RESET</button>
   </div>
 
   <script>

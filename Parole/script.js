@@ -1,26 +1,50 @@
+const STORAGE_KEY = "wordGameData";
+
 let activeTeam = 0
 const maxPass = 2
 
-const words_team0 = [
-  "CANE",
-  "MONTAGNA",
-  "BICICLETTA",
-  "PIZZA",
+const words_team0 = [  // Squadra Angelo
+"Ostensorio",
+"Cicirinella",
+"Turbofan",
+"Flap",
+"Kashakas",
+"Galbusera",
+"Langian",
+"Winglets",
+"Strumming",
+"Theremin",
+"Transustanziazione",
+"Kutta-Joukowski",
+"Armonica a bocca",
+"Debussy",
+"Mo ve ciccin ng lu battell"
 ]
 
-const words_team1 = [
-  "TELEFONO",
-  "ASTRONAUTA",
-  "LIBRO",
-  "MARE"
+const words_team1 = [  // Squadra Contendente
+"Zucchetto",
+"Fornacella",
+"Reynolds",
+"Weierstrass",
+"Ocarina",
+"Bagnèt verd",
+"Transumanza",
+"Portanza",
+"Ukulele",
+"Sitar",
+"Ambone",
+"Chebyshev",
+"Clavicembalo",
+"Rachmaninov",
+"Ce l'avete una casa?"
 ]
 
-const words = [
+let words = [
   {words:words_team0, currentIndex:-1, ended:false, pass:maxPass},
   {words:words_team1, currentIndex:-1, ended:false, pass:maxPass}
 ]
 
-const teams = [
+let teams = [
   {words:[]},
   {words:[]}
 ]
@@ -35,6 +59,54 @@ function startGame(){
 }
 
 //#region WORDS
+let typingInterval = null;
+
+function typeWriter(text, elementId, typingTime = 50) {
+  const el = document.getElementById(elementId);
+  const sound = document.getElementById("typeSound");
+
+  // ferma eventuali animazioni precedenti
+  if (typingInterval) {
+    clearInterval(typingInterval);
+    typingInterval = null;
+  }
+
+  el.innerText = "";
+  el.classList.add("typing");
+
+  let i = 0;
+
+  typingInterval = setInterval(() => {
+    el.innerText += text[i];
+
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play();
+    }
+
+    i++;
+
+    if (i >= text.length) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+
+      el.classList.remove("typing");
+    }
+  }, typingTime);
+}
+
+function stopTyping(elementId = "wordDisplay"){
+  const el = document.getElementById(elementId);
+
+  // ferma eventuali animazioni precedenti
+  if (typingInterval) {
+    clearInterval(typingInterval);
+    typingInterval = null;
+
+    el.classList.remove("typing");
+  }
+}
+
 function nextWord(){
 
   const current = words[activeTeam]
@@ -43,6 +115,8 @@ function nextWord(){
   document.querySelectorAll(".word-actions button").forEach(b => b.disabled = false)
 
   if(current.currentIndex >= current.words.length){
+    stopTyping()
+    
     document.getElementById("wordDisplay").innerText="FINE"
     current.ended = true
     const btns = document.querySelectorAll("#wordArea button")
@@ -50,12 +124,14 @@ function nextWord(){
     return
   }
 
-  document.getElementById("wordDisplay").innerText = current.words[current.currentIndex]
+  // document.getElementById("wordDisplay").innerText = current.words[current.currentIndex]
+  typeWriter(current.words[current.currentIndex], "wordDisplay", 70)
 
   saveGame();
 }
 
 function markWord(correct){
+  stopTyping()
 
   if(!correct)
   {
@@ -121,6 +197,7 @@ function removeWord(team,index){
 }
 //#endregion
 
+//#region RESULTS
 function checkCurrentWinner() {
   const teamElems = document.querySelectorAll(".team")
 
@@ -178,7 +255,9 @@ function selectTeam(index){
 
   saveGame();
 }
+//#endregion
 
+//#region SALVATAGGI
 // caricamento dati salvati
 document.addEventListener('DOMContentLoaded', ()=>{
   loadGame();
@@ -194,11 +273,11 @@ function saveGame() {
     teams: teams.map(t => ({ words: t.words })),
     activeTeam: activeTeam
   };
-  localStorage.setItem("gameData", JSON.stringify(data));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 function loadGame() {
-  const saved = localStorage.getItem("gameData");
+  const saved = localStorage.getItem(STORAGE_KEY);
   if(!saved) return;
 
   const data = JSON.parse(saved);
@@ -225,7 +304,9 @@ function loadGame() {
 }
 
 function resetGame() {
-  localStorage.removeItem("gameData");
+  stopTyping()
+
+  localStorage.removeItem(STORAGE_KEY);
 
   // Reset logico
   words.forEach((w,i) => {
@@ -242,4 +323,8 @@ function resetGame() {
 
   document.getElementById("startBtn").style.display = "block";
   document.getElementById("wordArea").style.display = "none";
+
+  const btns = document.querySelectorAll("#wordArea button")
+  btns.forEach(b => b.disabled = false)
 }
+//#endregion

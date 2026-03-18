@@ -21,6 +21,10 @@
         <button id="startBtn" onclick="startGame()">START</button>
 
         <div id="wordArea" style="display:none">
+          <!-- <audio id="typeSound" src="../src/type.mp3" preload="auto"></audio> -->
+          <audio id="typeSound" preload="auto">
+            <source src="../src/typeSound.m4a" type="audio/mp4">
+          </audio>
           <div id="wordDisplay">---</div>
           <button onclick="nextWord()">Nuova parola</button>
           <div class="word-actions">

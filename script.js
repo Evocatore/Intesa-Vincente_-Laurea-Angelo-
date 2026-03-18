@@ -65,3 +65,11 @@ window.onload = () => {
     });
   }, 300);
 };
+
+window.addEventListener("DOMContentLoaded", () => {
+  const sound = new Audio('./src/opening-sound.mp3');
+  sound.volume = 0.5;
+  sound.play().catch(e => {
+    console.warn("Autoplay bloccato dal browser:", e);
+  });
+});

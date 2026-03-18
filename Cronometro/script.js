@@ -1,3 +1,5 @@
+const STORAGE_KEY = "cronometro_save";
+
 let time = 0
 let timer = null
 let activeTeam = 0
@@ -83,16 +85,6 @@ function selectTeam(index){
   saveTeam()
 }
 
-function saveTime(t){
-
-  if(t <= 0) return
-
-  teams[activeTeam].times.push(t)
-  renderTeams()
-
-  saveToLocal()
-}
-
 function removeTime(team,index){
 
   teams[team].times.splice(index,1)
@@ -152,24 +144,36 @@ function renderTeams(){
 document.addEventListener('DOMContentLoaded', () => {
   totals = document.querySelectorAll(".total span");
 
-  const saved = localStorage.getItem("teamsData");
-  if(saved) {
-    const parsed = JSON.parse(saved);
-    // ripristina solo se è un array corretto
-    if(Array.isArray(parsed) && parsed.length === teams.length) {
-      parsed.forEach((team,i) => {
+  // const saved = localStorage.getItem("teamsData");
+  // if(saved) {
+  //   const parsed = JSON.parse(saved);
+  //   // ripristina solo se è un array corretto
+  //   if(Array.isArray(parsed) && parsed.length === teams.length) {
+  //     parsed.forEach((team,i) => {
+  //       teams[i].times = team.times || [];
+  //     });
+  //   }
+  // }
+
+  // renderTeams(); // aggiorna subito la UI
+
+  // const savedTime = localStorage.getItem("currentTime");
+  // const savedTeam = localStorage.getItem("activeTeam");
+
+  // if(savedTime) time = parseInt(savedTime);
+  // if(savedTeam) activeTeam = parseInt(savedTeam);
+
+  const savedState = localStorage.getItem("gameState");
+  if(savedState) {
+    const parsed = JSON.parse(savedState);
+    if(parsed.teams && Array.isArray(parsed.teams) && parsed.teams.length === teams.length) {
+      parsed.teams.forEach((team,i) => {
         teams[i].times = team.times || [];
       });
     }
+    if(parsed.currentTime) time = parsed.currentTime;
+    if(parsed.activeTeam !== undefined) activeTeam = parsed.activeTeam;
   }
-
-  renderTeams(); // aggiorna subito la UI
-
-  const savedTime = localStorage.getItem("currentTime");
-  const savedTeam = localStorage.getItem("activeTeam");
-
-  if(savedTime) time = parseInt(savedTime);
-  if(savedTeam) activeTeam = parseInt(savedTeam);
 
   updateDisplay();
   selectTeam(activeTeam);
@@ -196,17 +200,52 @@ function checkCurrentWinner(){
     totals[1].parentElement.classList.remove("current-winner")
   }
 }
+//#endregion
 
-function saveToLocal() {
-  localStorage.setItem("teamsData", JSON.stringify(teams));
+//#region SALVATAGGIO
+function saveState() {
+  const state = {
+    teams,
+    currentTime: time,
+    activeTeam
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
 function saveTimer() {
-  localStorage.setItem("currentTime", time);
-  saveTeam()
+  saveState();
 }
 
 function saveTeam() {
-  localStorage.setItem("activeTeam", activeTeam);
+  saveState();
+}
+
+function saveTime(t) {
+  if(t <= 0) return;
+
+  teams[activeTeam].times.push(t);
+  renderTeams();
+  saveState();
+}
+
+function resetAll() {
+  // Ferma il timer
+  clearInterval(timer);
+  timer = null;
+
+  // Azzera il tempo
+  time = 0;
+  updateDisplay();
+
+  // Azzera i team
+  teams.forEach(team => team.times = []);
+  renderTeams();
+
+  // Reset team attivo a 0
+  activeTeam = 0;
+  selectTeam(activeTeam);
+
+  // Rimuove tutto dal localStorage
+  localStorage.removeItem(STORAGE_KEY);
 }
 //#endregion
