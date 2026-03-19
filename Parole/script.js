@@ -1,7 +1,7 @@
 const STORAGE_KEY = "wordGameData";
 
 let activeTeam = 0
-const maxPass = 2
+const maxPass = 5
 
 const words_team0 = [  // Squadra Angelo
 "Ostensorio",

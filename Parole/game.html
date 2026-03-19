@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../icons/IV-192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../icons/IV-192.png">
+  <link rel="apple-touch-icon" href="../icons/IV-192.png">
+  
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="../Cronometro/style.css">
   <link rel="stylesheet" href="../style-global.css">
@@ -12,6 +17,7 @@
 <body>
   <header>
     Squadra attiva: <span id="activeTeamName">Squadra 1</span>
+    <button id="infoBtn">Regolamento</button>
   </header>
 
   <div class="game-layout">
@@ -53,10 +59,65 @@
     <button id="resetBtn" onclick="resetGame()">RESET</button>
   </div>
 
+  <div id="overlay-info-panel">
+    <div id="modal">
+      <h1>Regolamento</h1>
+
+      <ul>
+        <li>Due giocatori descrivono la parola, un giocatore tenta di indovinare</li>
+        <li>I membri della coppia si alternano dicendo <strong>UNA SOLA PAROLA</strong> ciascuno</li>
+        <li>Vietato usare la parola stessa o parti di essa</li>
+        <li>È possibile utilizzare fino a <strong>5 passo</strong> (utilizzabili da chiunque)</li>
+        <li>I tentativi per indovinare ciascuna parola sono infiniti</li>
+        <li>Il tempo viene stoppato ogni volta che una parola viene indovinata</li>
+      </ul>
+
+      <h3>Quando una parola non viene indovinata:</h3>
+      <ul>
+        <li>Si spende un passo e si passa alla parola successiva</li>
+        <li>Si continua normalmente a descrivere la parola</li>
+        <li>Si effettua un nuovo tentativo</li>
+      </ul>
+
+      <h3>Scopo del gioco</h3>
+      <p>Indovinare <strong>10 parole</strong> nel minor tempo possibile</p>
+
+      <h3>Penalità</h3>
+      <ul>
+        <li>Ogni passo: <strong>+30 secondi</strong></li>
+        <li>Ogni parola doppia: <strong>+10 secondi</strong></li>
+        <li>Ogni tentativo oltre il primo: <strong>+30 secondi</strong></li>
+      </ul>
+
+      <p class="note">
+        <em>
+          Nota: alcune “parole” potrebbero essere composte da più termini.
+        </em>
+      </p>
+    </div>
+  </div>
+
   <script>
     window.onload = () => {
       document.body.classList.add("loaded");
     };
+
+    const overlay = document.getElementById("overlay-info-panel");
+    const infoBtn = document.getElementById("infoBtn");
+    const modal = document.getElementById("modal");
+
+    // Apri regolamento
+    infoBtn.addEventListener("click", () => {
+      overlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    });
+
+    overlay.addEventListener("click", (e) => {
+      if (!modal.contains(e.target)) {
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    });
   </script>
 
 </body>
